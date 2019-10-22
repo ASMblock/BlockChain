@@ -1,0 +1,123 @@
+#!/bin/bash
+
+set -eo pipefail
+
+if [ $# -ne 0 ]
+then
+	echo >&2 "usage: git land"
+	exit 1
+fi
+
+commit=`git rev-parse HEAD`
+branch=`git symbolic-ref --short HEAD`
+onto=${ONTO:-main}
+if [ "$branch" = "$onto" ]
+then
+	echo >&2 "cannot land branch $onto onto itself"
+	exit 1
+fi
+
+if ! pr=`git ls-remote origin refs/pull/\*/head|fgrep $commit|cut -d/ -f3`
+then
+	echo >&2 "local branch $branch matches no pull request"
+	exit 1
+fi
+
+if ! url=`git ls-remote --get-url origin|egrep 'https://github.com/|git@github.com:'`
+then
+	echo >&2 "bad format for git remote URL"
+	exit 1
+fi
+
+# Convert the following
+#   https://github.com/user/repo.git
+#   git@github.com:user/repo.git
+# to
+#   user/repo
+proj=$(
+	printf %s "$url"            |
+	sed s,https://github.com/,, |
+	sed s,git@github.com:,,     |
+	sed s,.git,,
+)
+
+jqprg='
+	map(select(.body|contains("LGTM"))) |
+	reduce .[] as $c
+	({};
+		. + {($c.user.login): $c.body|contains("NOT LGTM")|not}
+	) |
+
+	to_entries |
+	if map(.value)|all then
+		map("@"+.key)|join(" ")
+	else
+		"not-ok"
+	end
+'
+comurl=https://api.github.com/repos/$proj/issues/$pr/comments'?per_page=100'
+reviewby=$(curl -sn $comurl|jq -r "$jqprg")
+if [ "$reviewby" = "" ]
+then
+	echo >&2 "no reviewers"
+	exit 1
+elif [ "$reviewby" = not-ok ]
+then
+	echo >&2 "some reviewers have responded NOT LGTM"
+	exit 1
+fi
+
+prurl=https://api.github.com/repos/$proj/issues/$pr
+wdir=$(mktemp -d -t gitland)
+mfile=$wdir/message
+cfile=$wdir/COMMIT_EDITMSG
+trap "rm $mfile $cfile && rmdir $wdir" EXIT
+curl -sn $prurl|jq -r '.title+"\n\n"+.body+"\n"' >$mfile
+echo Closes "#$pr." >>$mfile
+echo Reviewers: $reviewby >>$mfile
+
+if ! awk <$mfile 'length > 75 {exit 1}'
+then
+	echo '# Hey! Maybe you need to line-wrap this message perhaps?' >$cfile
+	echo >>$cfile
+fi
+tr -d '\r' <$mfile >>$cfile
+cat >>$cfile <<EOF
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+EOF
+
+${EDITOR:-vi} $cfile
+sed -i '' '/^#/d' $cfile                 # strip comments
+sed -i '' -n '/[^[:space:]]/,$p' $cfile  # strip leading blank lines
+if ! [ -s $cfile ]
+then
+	echo >&2 'empty commit message; aborting'
+	exit 2
+fi
+
+msg="$(jq -sR . <$cfile)"
+mergeurl=https://api.github.com/repos/$proj/pulls/$pr/merge
+mergejson='{
+	"commit_title": '"$msg"',
+	"commit_message": "",
+	"sha": "'$commit'",
+	"squash": true
+}'
+accept="Accept: application/vnd.github.polaris-preview+json"
+
+mergestatus="$(echo "$mergejson"|curl -snT - -H"$accept" $mergeurl)"
+if test "`echo "$mergestatus"|jq -r .merged`" != true
+then
+	printf >&2 '%s' 'GitHub API said: '
+	echo "$mergestatus"|jq >&2 -r '.message'
+	echo >&2 'Status checks failed? Merge conflict? ¯\_(ツ)_/¯'
+	exit 1
+fi
+
+git push origin :$branch
+git checkout $onto
+git fetch origin
+git merge --ff-only origin/$onto
+git branch -D $branch

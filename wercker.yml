@@ -1,0 +1,66 @@
+box: chaindev/ci:20170710
+# To update the docker image for this "box",
+# see $CHAIN/docker/ci.
+
+services:
+  - id: clkao/postgres-plv8
+    env:
+      POSTGRES_PASSWORD: p
+      POSTGRES_USER: u
+      POSTGRES_DB: core-test
+
+cored:
+  steps:
+    - script:
+        name: core tests
+        code: |
+          cp -a $WERCKER_SOURCE_DIR $CHAIN
+          source /opt/rh/devtoolset-2/enable
+          mv /usr/local/lib/librocksdb.a $CHAIN/vendor/github.com/facebook/rocksdb/
+          mkdir -p $CHAIN/vendor/github.com/google/snappy/build
+          mv /usr/local/lib/libsnappy.a $CHAIN/vendor/github.com/google/snappy/build/
+          DB_URL_TEST="postgres://u:p@$POSTGRES_PLV8_PORT_5432_TCP_ADDR:$POSTGRES_PLV8_PORT_5432_TCP_PORT/core-test?sslmode=disable" core-tests
+    - script:
+        name: gofmt
+        code: |
+          run-gofmt
+    - script:
+        name: gas
+        code: |
+          run-gas
+    - script:
+        name: check for tk and xxx
+        code: |
+          check-tk-xxx
+
+java:
+  steps:
+    - script:
+        name: java tests
+        code: |
+          cp -a $WERCKER_SOURCE_DIR $CHAIN
+          DATABASE_URL="postgres://u:p@$POSTGRES_PLV8_PORT_5432_TCP_ADDR:$POSTGRES_PLV8_PORT_5432_TCP_PORT/core-test?sslmode=disable" CACHE_DIR="$WERCKER_CACHE_DIR/maven" java-tests
+    - script:
+        name: jfmt
+        code: |
+          run-jfmt
+
+node:
+  steps:
+    - wercker/npm-install@1.1.4:
+      cwd: $WERCKER_SOURCE_DIR/sdk/node
+    - script:
+        name: node tests
+        code: |
+          cp -a $WERCKER_SOURCE_DIR $CHAIN
+          DATABASE_URL="postgres://u:p@$POSTGRES_PLV8_PORT_5432_TCP_ADDR:$POSTGRES_PLV8_PORT_5432_TCP_PORT/core-test?sslmode=disable" node-tests
+
+ruby:
+  steps:
+    - bundle-install:
+      cwd: $WERCKER_SOURCE_DIR/sdk/ruby
+    - script:
+        name: ruby tests
+        code: |
+          cp -a $WERCKER_SOURCE_DIR $CHAIN
+          DATABASE_URL="postgres://u:p@$POSTGRES_PLV8_PORT_5432_TCP_ADDR:$POSTGRES_PLV8_PORT_5432_TCP_PORT/core-test?sslmode=disable" ruby-tests

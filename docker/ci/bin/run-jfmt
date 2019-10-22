@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -veu
+
+cd $CHAIN
+bin/jfmt --replace $(find perf/ -type f -name "*.java")
+bin/jfmt --replace $(find sdk/java/ -type f -name "*.java")
+git diff --exit-code

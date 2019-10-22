@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# jrun compiles and runs one-off Java classes that use the Chain SDK.
+#
+# Usage:
+#
+# $ jrun path/to/some/JavaClass.java
+#
+# Be sure to compile the Java SDK first:
+#
+# $ cd $CHAIN/sdk/java
+# $ mvn package
+
+set -e
+
+SRC=$1
+SRC_BASENAME=`basename $SRC`
+CLASS=${SRC_BASENAME%.java}
+
+COMPILE_PATH=`mktemp -d`
+trap "rm -rf $COMPILE_PATH" EXIT
+
+JARFILE=`echo $CHAIN/sdk/java/target/chain-sdk-java*[[:digit:]].jar`
+export CLASSPATH=.:$JARFILE:$COMPILE_PATH
+
+javac -d $COMPILE_PATH -Xlint:deprecation $SRC
+java $CLASS

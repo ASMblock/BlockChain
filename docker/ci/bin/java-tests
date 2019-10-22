@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -veou pipefail
+
+: ${DATABASE_URL:?must be set}
+
+# setup cache
+set +e
+mkdir -p $CACHE_DIR
+set -e
+
+setup-core
+SDKTARGET=chain-test
+cd $CHAIN/sdk/java
+mvn -Dmaven.repo.local=$CACHE_DIR -Djar.finalName=$SDKTARGET integration-test
+
+# compile non-sdk java files
+export CLASSPATH=$CHAIN/sdk/java/target/$SDKTARGET.jar
+cd $CHAIN/perf
+for file in *.java
+do javac $file
+done

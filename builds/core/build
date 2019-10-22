@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Disable cgo entirely.
+# We have seen one too many problems with cgo,
+# including an occasional (rare) malloc failure.
+# See https://github.com/lib/pq/issues/395.
+export CGO_ENABLED=0
+
+commit=`git rev-parse HEAD`
+date=`date --utc --rfc-3339=seconds|tr ' ' T|sed s/+00:00/Z/`
+ldflags="-X main.buildTag=$TAG -X main.buildCommit=$commit -X main.buildDate=$date"
+
+/usr/local/go/bin/go build\
+	-tags prod\
+	-ldflags "$ldflags"\
+	-o builds/core/target/cored\
+	chain/cmd/cored
+
+/usr/local/go/bin/go build\
+	-race\
+	-tags prod\
+	-ldflags "$ldflags"\
+	-o builds/core/target/cored_race\
+	chain/cmd/cored
+
+tar cf - -C builds/core/target .

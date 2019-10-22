@@ -1,0 +1,11 @@
+*.msi
+*.exe
+*.wixobj
+*.wixpdb
+*.cab
+*.pfx
+ChainBundle/bin/
+ChainBundle/obj/
+ChainPackage/bin/
+ChainBundle/obj/
+build/

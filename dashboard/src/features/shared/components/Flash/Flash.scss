@@ -1,0 +1,49 @@
+.main {
+  height: 54px;
+  display: flex;
+  align-items: center;
+
+  margin: $gutter-size $gutter-size 0;
+  padding: 0 $gutter-size/2;
+  border: 1px solid transparent;
+
+  :global {
+    .close {
+      color: inherit;
+      padding-right: 5px;
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.info {
+  background-color: $alert-info-bg;
+  border-color: $alert-info-border;
+  color: $alert-info-text;
+}
+
+.success {
+  background-color: $success-background;
+  border-color: $success-border;
+  color: $success;
+}
+
+.danger {
+  background-color: $highlight-danger-background;
+  border-color: $highlight-danger-border;
+  color: $highlight-danger;
+}
+
+.content {
+  width: 100%;
+  flex: 1;
+  padding-left: 2px;
+
+  p {
+    margin: 0;
+  }
+}

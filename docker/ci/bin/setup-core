@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -veou pipefail
+
+: ${DATABASE_URL:?must be set}
+
+# waitForLeader blocks the script and greps
+# the generator's output for a log message signifying
+# the generator is fully initialized. It will timeout
+# after 5s.
+waitForLeader() {(
+	set +e
+	start=`date +%s`
+	while [ $(( `date +%s` - $start )) -lt 5 ]; do
+		grep "I am the core leader" $initlog >/dev/null
+		if [[ $? -eq 0 ]]; then
+			break
+		fi
+	done
+)}
+
+PATH=$(go env GOPATH)/bin:$PATH:$CHAIN/bin
+go install -tags 'http_ok localhost_auth init_cluster' chain/cmd/{cored,corectl}
+initlog=`mktemp`
+cored 2>&1 | tee $initlog &
+
+corectl wait
+waitForLeader
+corectl config-generator

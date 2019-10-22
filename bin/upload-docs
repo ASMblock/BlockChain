@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -ef -o pipefail
+
+bucket="chain-staging.chain.com"
+if [ "$1" = "prod" ];
+then
+  bucket="chain.com"
+fi
+
+bucket_url=s3://$bucket
+bucket_prefix="docs/"
+
+generate_dest_path=`mktemp -d`
+trap "echo 'Error generating docs, cleaning up temp files...'; rm -rf $generate_dest_path" ERR
+
+echo "Generating documentation..."
+
+sourcePath=${PWD}
+
+go install chain/cmd/md2html
+go install chain/cmd/docgenerate
+go install chain/cmd/docsync
+
+docgenerate $sourcePath $generate_dest_path
+
+echo
+echo "Uploading docs...."
+docsync $bucket $bucket_prefix $generate_dest_path

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Chain Core Developer Edition Updates</title>
+    <link>https://download.chain.com/mac/updates.xml</link>
+    <description>Most recent changes with links to updates.</description>
+    <language>en</language>
+      <item>
+        <title>Chain Core Developer Edition 1.2.0</title>
+        <description>
+          <![CDATA[
+            <ul>
+              <li>Update the Chain Core server package to version 1.2.0</li>
+            </ul>
+          ]]>
+        </description>
+        <pubDate>Fri, 12 May 2017 16:06:18 -0700</pubDate>
+        <enclosure
+        	url="https://download.chain.com/mac/Chain_Core_1.2.0.zip"
+        	sparkle:version="1.2.0"
+        	length="31350237"
+        	type="application/octet-stream"
+        	sparkle:dsaSignature=""
+        	/>
+      </item>
+  </channel>
+</rss>
