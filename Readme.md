@@ -126,7 +126,7 @@ $ go build -tags 'http_ok localhost_auth init_cluster' chain/cmd/cored
 $ go build chain/cmd/corectl
 ```
 
-## Developing Chain Core
+## Developing ASM Chain
 
 ### Updating the schema with migrations
 
@@ -160,7 +160,7 @@ the upstream repo.) Also, make sure the upstream working tree is clean.
 
 ## License
 
-Chain Core Developer Edition is licensed under the terms of the [GNU
+ASM Chain Developer Edition is licensed under the terms of the [GNU
 Affero General Public License Version 3 (AGPL)](LICENSE).
 
 The Chain Java SDK (`/sdk/java`) is licensed under the terms of the
