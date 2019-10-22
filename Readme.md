@@ -1,29 +1,29 @@
 # NOTICE
 
-Development and support has ended for Chain Core Developer Edition, and this repository is now archived.
+Development and support has ended for ASM Chain Developer Edition, and this repository is now archived.
 
-We encourage anyone still using Chain Core DE to transition to **[Sequence](https://chain.com/sequence)**, our ledger-as-a-service built for tracking and transferring balances in a token format. This change applies to Chain Core DE only; if you are a Chain Core Enterprise customer, no action is needed.
+We encourage anyone still using ASM Chain DE to transition to **[Sequence](https://chain.com/sequence)**, our ledger-as-a-service built for tracking and transferring balances in a token format. This change applies to ASM Chain DE only; if you are a Chain Core Enterprise customer, no action is needed.
 
 ---
 
-## Chain Core Developer Edition
+## ASM Chain Developer Edition
 
-**Chain Core** is software designed to operate and connect to highly scalable permissioned blockchain networks conforming to the Chain Protocol. Each network maintains a cryptographically-secured transaction log, known as a blockchain, which allows partipicants to define, issue, and transfer digital assets on a multi-asset shared ledger. Digital assets share a common, interoperable format and can represent any units of value that are guaranteed by a trusted issuer — such as currencies, bonds, securities, IOUs, or loyalty points. Each Chain Core holds a copy of the ledger and independently validates each update, or “block,” while a federation of block signers ensures global consistency of the ledger.
+**ASM Chain** is software designed to operate and connect to highly scalable permissioned blockchain networks conforming to the Chain Protocol. Each network maintains a cryptographically-secured transaction log, known as a blockchain, which allows partipicants to define, issue, and transfer digital assets on a multi-asset shared ledger. Digital assets share a common, interoperable format and can represent any units of value that are guaranteed by a trusted issuer — such as currencies, bonds, securities, IOUs, or loyalty points. Each ASM Chain holds a copy of the ledger and independently validates each update, or “block,” while a federation of block signers ensures global consistency of the ledger.
 
-**Chain Core Developer Edition** is a free, downloadable version of Chain Core that is open source and licensed under the AGPL. Individuals and organizations use Chain Core Developer Edition to learn, experiment, and build prototypes.
+**ASM Chain Developer Edition** is a free, downloadable version of ASM Chain that is open source and licensed under the AGPL. Individuals and organizations use Chain Core Developer Edition to learn, experiment, and build prototypes.
 
-Chain Core Developer Edition can be run locally on Mac, Windows, or Linux to create a new blockchain network, connect to an existing blockchain network, or connect to the public Chain testnet, operated by Chain, Microsoft, and Cornell University’s IC3.
+ASM Chain Developer Edition can be run locally on Mac, Windows, or Linux to create a new blockchain network, connect to an existing blockchain network, or connect to the public Chain testnet, operated by Chain, Microsoft, and Cornell University’s IC3.
 
-For more information about how to use Chain Core Developer Edition, see the docs: https://chain.com/docs
+For more information about how to use ASM Chain Developer Edition, see the docs: https://chain.com/docs
 
 ## Download
 
-To install Chain Core Developer Edition on Mac, Windows, or Linux, please visit [our downloads page](https://chain.com/docs/core/get-started/install).
+To install ASM Chain Developer Edition on Mac, Windows, or Linux, please visit [our downloads page](https://chain.com/docs/core/get-started/install).
 
 ## Contributing
 
 Chain has adopted the code of conduct defined by the Contributor Covenant. It can be read in full [here](https://github.com/chain/chain/blob/main/CODE_OF_CONDUCT.md).
-This repository is the canonical source for Chain Core Developer Edition. Consequently, Chain engineers actively maintain this repository.
+This repository is the canonical source for ASM Chain Developer Edition. Consequently, Chain engineers actively maintain this repository.
 If you are interested in contributing to this code base, please read our [issue](https://github.com/chain/chain/blob/main/.github/ISSUE_TEMPLATE.md) and [pull request](https://github.com/chain/chain/blob/main/.github/PULL_REQUEST_TEMPLATE.md) templates first.
 
 ## Building from source
@@ -63,9 +63,9 @@ $ git clone https://github.com/chain/chain $CHAIN
 $ cd $CHAIN
 ```
 
-You can build Chain Core using the `build-cored-release` script.
+You can build ASM Chain using the `build-cored-release` script.
 The build product allows connections over HTTP, unauthenticated
-requests from localhost, and the ability to reset the Chain Core.
+requests from localhost, and the ability to reset the ASM Chain.
 
 `build-cored-release` accepts a accepts a Git ref (branch, tag, or commit SHA)
 from the chain repository and an output directory:
@@ -76,8 +76,8 @@ $ ./bin/build-cored-release chain-core-server-1.2.0 .
 
 This will create two binaries in the current directory:
 
-* [cored](https://chain.com/docs/core/reference/cored): the Chain Core daemon and API server
-* [corectl](https://chain.com/docs/core/reference/corectl): control functions for a Chain Core
+* [cored](https://chain.com/docs/core/reference/cored): the ASM Chain daemon and API server
+* [corectl](https://chain.com/docs/core/reference/corectl): control functions for a ASM Chain
 
 Set up the database:
 
@@ -85,7 +85,7 @@ Set up the database:
 $ createdb core
 ```
 
-Start Chain Core:
+Start ASM Chain:
 
 ```sh
 $ ./cored
